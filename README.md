@@ -12,3 +12,10 @@ RaceOutcomePred/
 ├── requirements.txt
 └── README.md
 ```
+```
+- Era filtering happens first, so none of the pre-2014 data ever touches the features
+- The label (podium) is derived from positionOrder rather than position — this matters because position is null for 
+drivers who DNF, but positionOrder always has a value
+- Qualifying times (q1/q2/q3) are kept as raw strings for now — converting them to milliseconds is a job for features.py, 
+which is the next script to write
+```
