@@ -1,3 +1,4 @@
+```
 RaceOutcomePred/
 ├── data/
 │   └── raw/          # Kaggle CSVs here
@@ -10,3 +11,4 @@ RaceOutcomePred/
 ├── results/          # metrics, plots
 ├── requirements.txt
 └── README.md
+```
