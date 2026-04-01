@@ -47,11 +47,11 @@ def get_models() -> dict[str, Pipeline]:
         "logreg_l2": Pipeline([
             ("scaler", StandardScaler()),
             ("clf", LogisticRegression(
-                penalty="l2",
+                l1_ratio=0,
                 C=1.0,
                 max_iter=1000,
                 random_state=RANDOM_SEED,
-                class_weight="balanced",   # handles podium class imbalance
+                class_weight="balanced",
             )),
         ]),
 
@@ -59,8 +59,8 @@ def get_models() -> dict[str, Pipeline]:
         "logreg_l1": Pipeline([
             ("scaler", StandardScaler()),
             ("clf", LogisticRegression(
-                penalty="l1",
-                solver="liblinear",
+                l1_ratio=1,
+                solver="saga",
                 C=1.0,
                 max_iter=1000,
                 random_state=RANDOM_SEED,
