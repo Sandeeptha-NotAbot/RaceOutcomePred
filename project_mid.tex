@@ -1,0 +1,96 @@
+\documentclass[11pt]{article}
+
+% Use Helvetica font.
+%\usepackage{helvet}
+
+%\usepackage[T1]{fontenc}
+%\usepackage[sc]{mathpazo}
+\usepackage{color}
+\usepackage{amsmath,amsthm,amssymb,multirow,paralist}
+%\renewcommand{\familydefault}{\sfdefault}
+
+% Use 1/2-inch margins.
+\usepackage[margin=0.8in]{geometry}
+\usepackage{hyperref}
+
+\begin{document}
+
+\begin{center}
+{\Large \textbf{Formula 1 Race Algorithm Prediction}
+
+\vspace{10pt}
+
+Project Midterm Report}
+
+\vspace{10pt}
+
+\textit{Team Members: Sandeeptha Madan, Evan Sivets}
+\end{center}
+
+% \linethickness{1mm}\line(1,0){498}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{abstract}
+Our task in this project is to predict the winners of the races in the upcoming Formula 1 season. Our motivation is a strong interest in the sport and in seeing our work come to life, to see how accurate our results are. We have done projects related to Formula 1 in the past and want to build on that to explore something new. We will use data from previous years on all racers, tracks, and teams, and feed it into the models we used in class to predict this year's race outcomes accurately. So far, we have found that the SVM Linear model has been the best. We also did a practice test based on a previous year, and it correctly predicted the winner, Leclerc, at the 2022 Bahrain GP.
+\end{abstract}
+
+\section{Introduction (Done/Look Over)}
+
+Formula 1 is the highest level of international auto racing, featuring 24 racing weekends across international circuits. This means there will be a different track to race on each event weekend. Different teams are racing as well, each with two racers. These teams each have different vesicles, all very similar to one another, making some vehicles better than others. This project will use past data from race tracks, teams, racers, and finishes to predict the podium placers for every race this coming year. 
+
+The datasheet that we will be using is "Formula 1 World Championship - Kaggle." We will be using data from 2014-2024, as pre-2014 regulations differ in ways that make the constructor/driver strength non-comparable to previous eras. The models we will be using to test these data sets are Logistic Regression (L2), Logistic Regression (L1), Linear SVM, RBF SVM, and Decision Tree. With these models, the following tasks will be to take into account the starting grid position, qualifying classification position, drivers' podium rate across all prior races this season, constructors' podium rate across all prior races, Drivers' average grid position across all prior races, and drivers' podium rate minus their teammates' podium rate.
+
+The expected outcomes of this project are that the SVM Linear will be the best model to use, as linear models should follow the data, and that SVM will be the best margin classifier to group everything. We do not expect to predict every race correctly, but we do expect the results to be close to what was calculated based on statistics the drivers and teams have shown from past races on the tracks that they will see this season.
+
+\section{Related Work (Done 1, could add a second in the future)}
+
+There has been a similar study to ours by Spencer Staub at The George Washington University in Autumn 2022, titled "Formula One Race Prediction Model." He took a look at all the features in our data, such as drivers' previous races at tracks, teams' past results, qualifying win rates, vehicle engineering, and drivers' past finishes. They used similar models we used in Logistic Regression and SVM, plus one we did not use: XGBoost. Spencer also took a look at the improvement results from the previous season, which had an accuracy of 77 percent, suggesting the stats would be in our favor and something to take into account when comparing our work with past stats. In their future work, they plan to use lap data for testing, which we currently have in our project, to help with predicting the outcomes of future races.
+
+\section{Your methods name (To Do)}
+
+In this section, you will introduce your machine learning
+algorithms used in this part.
+
+If you are using existing methods on a \textbf{new dataset}. You
+can talk about ``dataset collection'', ``data pre-processing'',
+``Feature selection'', ``Choices of hyper-parameter'',
+``Evaluation metrics'', etc.
+
+If you propose some \textbf{new methods}. You can talk about
+``Drawbacks of existing methods'', ``Your proposed methods'',
+``Your models based on your methods'', etc.
+
+These are possible subsections in this part. You don't need to
+include all of them. I want to see the contents that you spend
+time on and have some insights.
+
+This part is one of the most important sections. The length of this
+section should be about 1.5 pages.
+
+\section{Preliminary Results(To Do)}
+
+In this section, you will list some experimental results with
+some comparisons with some baseline methods.
+
+For example, you choose to use SVM on a new dataset. Possible
+baselines would be linear perceptron and logistic regression by
+using the same set of features.
+
+In this midterm report, you can use a table to show some
+preliminary results along with some discussions. This part should
+be about 0.5 page.
+
+\section{Future plan(To Do)}
+
+In this section, briefly discuss your plan based on current
+achievements.
+
+\section{References (To Do)}
+
+https://datasci.columbian.gwu.edu/sites/g/files/zaxdzs4746/files/2023-02/f1-final-presentation.pdf
+
+
+\end{document}
