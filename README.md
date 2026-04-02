@@ -158,6 +158,6 @@ All outputs saved to `results/`.
 | Name | GitHub |
 |---|---|
 | Sandeeptha Madan | [@Sandeeptha-NotAbot](https://github.com/Sandeeptha-NotAbot) |
-| Evan Sivets | — |
+| Evan Sivets | [@boots99](https://github.com/boots99) |
  
 *Iowa State University — COMS 474: Introduction to Machine Learning*
