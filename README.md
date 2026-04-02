@@ -55,4 +55,17 @@ Before a race starts, we feed the model features we know *ahead of time* — gri
 > All rolling stats use a **shift(1) expanding window** — the current race is never included in its own features to prevent data leakage.
  
 ---
+
+## 🤖 Models
+ 
+| Model | Type | Notes |
+|---|---|---|
+| Logistic Regression (L2) | Linear | Baseline classifier |
+| Logistic Regression (L1) | Linear | Sparse — good for feature selection |
+| SVM Linear | Linear | Maximum margin classifier |
+| SVM RBF | Nonlinear | Captures complex decision boundaries |
+| Decision Tree | Nonlinear | Interpretable structure |
+ 
+---
+ 
  
