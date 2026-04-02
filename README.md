@@ -2,7 +2,7 @@
 
 > **Can we predict who stands on the podium before the race even starts?**
 
-![F1 Car](https://media1.tenor.com/m/YxQ7dqEdZjIAAAAd/ferrari-sf23.gif)
+![F1 Car](https://media.tenor.com/HAQL59Z7D_wAAAAi/formula-racing.gif)
  
 Machine learning models that predict Formula 1 podium finishes (P1–P3) using only pre-race data — no live telemetry, no lap times, no cheating.
  
