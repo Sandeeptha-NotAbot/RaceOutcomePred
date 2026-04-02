@@ -28,3 +28,16 @@ Before a race starts, we feed the model features we know *ahead of time* — gri
 → Model outputs: **high podium probability** ✅ *(he won)*
  
 > **Why it's not cheating:** Every feature is available before lights out. No lap times, no live positions, no DNF data — just what teams and analysts would actually know before the race.
+
+---
+ 
+## 📦 Dataset
+ 
+- **Source:** [Formula 1 World Championship — Kaggle](https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020)
+- **Scope:** 2014–2024 (hybrid-turbo era only)
+- **Why not earlier?** Pre-2014 regulation differences make constructor/driver strength non-comparable across eras. The 2026 regulation overhaul is the same reason we stop at 2024.
+- **Label:** Binary — `1` = podium (P1–P3), `0` = non-podium
+- **Class balance:** ~14.8% podium rate (3 podiums per race × ~20 drivers)
+ 
+---
+ 
