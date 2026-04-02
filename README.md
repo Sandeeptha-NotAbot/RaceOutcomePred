@@ -27,3 +27,24 @@ SVM Linear is the best overall model on val (F1: 0.707, ROC-AUC: 0.946)
 Logistic Regression L1 and L2 are basically identical, which means L1's sparsity isn't helping
 worth noting
 ```
+What the model actually does
+Before a race starts, you feed it the features we engineered — things we know ahead of time like grid position, qualifying position, and how the driver and constructor have been performing so far that season. The model outputs a probability: "this driver has a 72% chance of finishing on the podium."
+Concrete example
+Say it's the 2022 Bahrain GP and you want to predict whether Leclerc will podium:
+
+grid = 1 (he qualified P1)
+quali_position = 1
+driver_season_podium_rate = 0.0 (no prior races this season yet, filled with season mean)
+constructor_season_podium_rate = 0.0 (same)
+driver_season_avg_grid = 1.0
+teammate_podium_rate_diff = 0.0
+
+The model looks at those numbers, compares them against patterns it learned from 2014–2021 data, and says "historically, drivers with these numbers finish on the podium X% of the time."
+Why it's not cheating
+The key thing is we only use information available before the race starts — no lap times, no race positions, no DNF info. That's what makes it a genuine prediction rather than just a lookup.
+What the model learned
+From 2014–2021 it essentially learned things like:
+
+Starting from pole → high podium probability
+Constructor has been strong this season → higher probability
+Driver has been consistently finishing well → higher probability
