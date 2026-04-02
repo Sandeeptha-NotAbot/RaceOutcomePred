@@ -68,4 +68,96 @@ Before a race starts, we feed the model features we know *ahead of time* — gri
  
 ---
  
+## 📊 Results
  
+**Validation Set (2022 season)**
+ 
+| Model | Accuracy | Precision | Recall | F1 | ROC-AUC |
+|---|---|---|---|---|---|
+| Logistic Regression L2 | 0.8705 | 0.5391 | 0.9394 | 0.6851 | 0.9444 |
+| Logistic Regression L1 | 0.8705 | 0.5391 | 0.9394 | 0.6851 | 0.9441 |
+| **SVM Linear** | **0.8773** | **0.5508** | **0.9848** | **0.7065** | **0.9461** |
+| SVM RBF | 0.8591 | 0.5161 | 0.9697 | 0.6737 | 0.9383 |
+| Decision Tree | 0.8432 | 0.4885 | 0.9697 | 0.6497 | 0.9282 |
+ 
+**Test Set (2023–2024 seasons)**
+ 
+| Model | Accuracy | Precision | Recall | F1 | ROC-AUC |
+|---|---|---|---|---|---|
+| Logistic Regression L2 | 0.8368 | 0.4769 | 0.8986 | 0.6231 | 0.9285 |
+| Logistic Regression L1 | 0.8368 | 0.4769 | 0.8986 | 0.6231 | 0.9285 |
+| **SVM Linear** | 0.8303 | 0.4669 | 0.9203 | 0.6195 | **0.9299** |
+| SVM RBF | 0.8281 | 0.4640 | 0.9348 | 0.6202 | 0.9118 |
+| Decision Tree | 0.8150 | 0.4429 | 0.8986 | 0.5933 | 0.9055 |
+ 
+> High recall (~0.93–0.98) means the models catch almost every real podium. Lower precision reflects the inherent difficulty of the class imbalance — only 3 of ~20 drivers podium per race.
+
+### Feature Correlation Heatmap
+![Feature Correlation Heatmap](results/feature_correlation_heatmap.png)
+
+### Feature Importance
+![Decision Tree Importance](results/importance_decision_tree.png)
+![Logistic Regression Importance](results/importance_logreg_l2.png)
+ 
+---
+
+## 🗂️ Repo Structure
+ 
+```
+RaceOutcomePred/
+├── data/
+│   └── raw/          # Kaggle CSVs here (not tracked in git)
+├── src/
+│   ├── data_loader.py
+│   ├── features.py
+│   ├── train.py
+│   ├── evaluate.py
+│   └── heatmap.py
+├── models/           # saved model files (not tracked in git)
+├── results/          # metrics, plots
+├── requirements.txt
+└── README.md
+```
+ 
+---
+ 
+## 🚀 Setup & Usage
+ 
+```bash
+# 1. Clone the repo
+git clone https://github.com/Sandeeptha-NotAbot/RaceOutcomePred.git
+cd RaceOutcomePred
+ 
+# 2. Create and activate virtual environment
+python3 -m venv venv
+source venv/bin/activate
+ 
+# 3. Install dependencies
+pip install -r requirements.txt
+```
+ 
+Download the Kaggle dataset and place all CSV files in `data/raw/`, then:
+ 
+```bash
+# Train all models
+python -m src.train
+ 
+# Evaluate and generate plots
+python -m src.evaluate
+ 
+# Generate feature correlation heatmap
+python -m src.heatmap
+```
+ 
+All outputs saved to `results/`.
+ 
+---
+ 
+## 👩‍💻 Team
+ 
+| Name | GitHub |
+|---|---|
+| Sandeeptha Madan | [@Sandeeptha-NotAbot](https://github.com/Sandeeptha-NotAbot) |
+| Evan Sivets | — |
+ 
+*Iowa State University — COMS 474: Introduction to Machine Learning*
