@@ -40,4 +40,19 @@ Before a race starts, we feed the model features we know *ahead of time* — gri
 - **Class balance:** ~14.8% podium rate (3 podiums per race × ~20 drivers)
  
 ---
+
+## ⚙️ Features
+ 
+| Feature | Description |
+|---|---|
+| `grid` | Starting grid position |
+| `quali_position` | Qualifying classification position |
+| `driver_season_podium_rate` | Driver's podium rate across all prior races this season |
+| `constructor_season_podium_rate` | Constructor's podium rate across all prior races this season |
+| `driver_season_avg_grid` | Driver's average grid position across all prior races this season |
+| `teammate_podium_rate_diff` | Driver's podium rate minus their teammate's this season |
+ 
+> All rolling stats use a **shift(1) expanding window** — the current race is never included in its own features to prevent data leakage.
+ 
+---
  
