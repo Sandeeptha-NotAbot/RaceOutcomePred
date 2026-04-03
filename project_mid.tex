@@ -70,27 +70,30 @@ time on and have some insights.
 This part is one of the most important sections. The length of this
 section should be about 1.5 pages.
 
-\section{Preliminary Results(To Do)}
+\section{Preliminary Results(Done/Look over)}
 
-In this section, you will list some experimental results with
-some comparisons with some baseline methods.
+To help show what we are wanting to do with this project, we started off by predicting a race that had already happened to see what the results would be. We feed the model features that we already know ahead of time, grid position, qualifying result and how the driver and constructor have been performing that season. The race we decided to use was 2022 Bahrain GP where Leclerc won. The model used the following data and predicted him to win, which he did. 
 
-For example, you choose to use SVM on a new dataset. Possible
-baselines would be linear perceptron and logistic regression by
-using the same set of features.
+We used our six models stated in the introduction to run tests on two Sets, Validation(2022) and Test(2023-2024). With these sets we found the accuracy, precision, recall, F1 and ROC-AUC of each model. With our Validation set SVM linear had the highest percentage in each of the 5 categories tested, while Decision tree being the worst in about every category. With the Test set SVM linear had the highest ROC-AUC while other models had the highest percentages else where. With these high percentages this means that the models can catch almost every podium finish accurately. 
 
-In this midterm report, you can use a table to show some
-preliminary results along with some discussions. This part should
-be about 0.5 page.
+In one of our other tests we took two models, Decision Tree and Logistic Regression(L2) -|Coefficients|, and tested what is the importance of each feature. Decision Tree said the that qualifying postion as the most importance as an 80 percent importance value, with teammate podium rate difference being the least important. L2 stated that the grid was the most important, and matching the Decision tree in having the same feature with the least importance. Although these models had different importance values across features, they each had the same top three and bottom three just in different order.
 
-\section{Future plan(To Do)}
+In another test we made a heatmap on how the features correlate with one another. This map will help us determine the most important features. These would be grid position, qualifying position and, driver/constructor podium rates. It also helps to take into account what features can be avoided and are redundant, for example teammate podium rate diff.
 
-In this section, briefly discuss your plan based on current
-achievements.
+
+
+\section{Future plan(Done/Look Over)}
+
+A key next step for this project is to evolve it from a solid classification model into a more rich and realistic race-prediction system. While the current model performs well using only pre-race features, future efforts should focus on enhancing generalization and practical utility. One way to achieve this is by implementing season-by-season validation to ensure the model remains reliable across different years, particularly given the frequent shifts in team performance in Formula 1. 
+
+Expanding the feature set to include recent race form, circuit-specific performance, and reliability indicators would provide a more comprehensive representation of race conditions. Additionally, since the model currently prioritizes high recall at the expense of precision, refining probability thresholds or adopting a ranking-based approach—where drivers are ordered by the likelihood of achieving a podium finish—would make the predictions more meaningful.
+
+Incorporating advanced models, such as ensemble methods like Random Forests or XGBoost, could further enhance performance. Finally, presenting the predictions in a more user-friendly format, such as a dashboard or race preview tool, would increase the project’s impact and make it more appealing as both a technical and applied machine learning solution.
 
 \section{References (To Do)}
 
 https://datasci.columbian.gwu.edu/sites/g/files/zaxdzs4746/files/2023-02/f1-final-presentation.pdf
 
+https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020
 
 \end{document}
