@@ -7,11 +7,14 @@
 %\usepackage[sc]{mathpazo}
 \usepackage{color}
 \usepackage{amsmath,amsthm,amssymb,multirow,paralist}
+\usepackage{graphicx}
+
 %\renewcommand{\familydefault}{\sfdefault}
 
 % Use 1/2-inch margins.
 \usepackage[margin=0.8in]{geometry}
 \usepackage{hyperref}
+\usepackage{booktabs}
 
 \begin{document}
 
@@ -34,66 +37,159 @@ Project Midterm Report}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{abstract}
-Our task in this project is to predict the winners of the races in the upcoming Formula 1 season. Our motivation is a strong interest in the sport and in seeing our work come to life, to see how accurate our results are. We have done projects related to Formula 1 in the past and want to build on that to explore something new. We will use data from previous years on all racers, tracks, and teams, and feed it into the models we used in class to predict this year's race outcomes accurately. So far, we have found that the SVM Linear model has been the best. We also did a practice test based on a previous year, and it correctly predicted the winner, Leclerc, at the 2022 Bahrain GP.
+Our task in this project is to predict whether a Formula 1 driver will finish on the podium (top 3) in a given race before it begins. Our motivation is a strong interest in the sport and in connecting machine learning theory to real-world structured data. We use data from the 2014--2024 hybrid-turbo era, engineering pre-race features such as grid position, qualifying result, and rolling driver and constructor performance statistics. We compare five models: Logistic Regression (L1 and L2), Support Vector Machine (linear and RBF kernels), and Decision Tree. Our best-performing model, SVM Linear, achieves a ROC-AUC of 0.946 on the 2022 validation set and 0.930 on the 2023--2024 test set.
 \end{abstract}
 
-\section{Introduction (Done/Look Over)}
+\section{Introduction}
 
-Formula 1 is the highest level of international auto racing, featuring 24 racing weekends across international circuits. This means there will be a different track to race on each event weekend. Different teams are racing as well, each with two racers. These teams each have different vesicles, all very similar to one another, making some vehicles better than others. This project will use past data from race tracks, teams, racers, and finishes to predict the podium placers for every race this coming year. 
+Formula 1 is the highest level of international auto racing, featuring 24 racing weekends across international circuits. This means there will be a different track to race on each event weekend. Different teams are racing as well, each with two racers. Because vehicle performance varies significantly between teams and regulations change over time, predicting race outcomes is a challenging but tractable machine learning problem.
+ 
+This project uses the Formula 1 World Championship dataset from Kaggle, scoped to the 2014--2024 hybrid-turbo era. Pre-2014 data is excluded because major regulation changes make constructor and driver strength non-comparable across eras. Similarly, 2026 data is excluded due to the most significant regulation overhaul in the sport's history, which reshuffled the entire power unit landscape. The prediction task is binary classification: given pre-race features for a driver entering a race, predict whether they will finish on the podium (positions 1--3).
 
-The datasheet that we will be using is "Formula 1 World Championship - Kaggle." We will be using data from 2014-2024, as pre-2014 regulations differ in ways that make the constructor/driver strength non-comparable to previous eras. The models we will be using to test these data sets are Logistic Regression (L2), Logistic Regression (L1), Linear SVM, RBF SVM, and Decision Tree. With these models, the following tasks will be to take into account the starting grid position, qualifying classification position, drivers' podium rate across all prior races this season, constructors' podium rate across all prior races, Drivers' average grid position across all prior races, and drivers' podium rate minus their teammates' podium rate.
+The models evaluated are Logistic Regression (L1 and L2 regularization), Support Vector Machine (linear and RBF kernels), and Decision Tree. Features include starting grid position, qualifying classification position, driver and constructor podium rates for the current season, driver average grid position for the current season, and a teammate podium rate differential.
 
-The expected outcomes of this project are that the SVM Linear will be the best model to use, as linear models should follow the data, and that SVM will be the best margin classifier to group everything. We do not expect to predict every race correctly, but we do expect the results to be close to what was calculated based on statistics the drivers and teams have shown from past races on the tracks that they will see this season.
-
-\section{Related Work (Done 1, could add a second in the future)}
+\section{Related Work}
 
 There has been a similar study to ours by Spencer Staub at The George Washington University in Autumn 2022, titled "Formula One Race Prediction Model." He took a look at all the features in our data, such as drivers' previous races at tracks, teams' past results, qualifying win rates, vehicle engineering, and drivers' past finishes. They used similar models we used in Logistic Regression and SVM, plus one we did not use: XGBoost. Spencer also took a look at the improvement results from the previous season, which had an accuracy of 77 percent, suggesting the stats would be in our favor and something to take into account when comparing our work with past stats. In their future work, they plan to use lap data for testing, which we currently have in our project, to help with predicting the outcomes of future races.
 
-\section{Your methods name (To Do)}
+\section{Methods}
 
-In this section, you will introduce your machine learning
-algorithms used in this part.
+\subsection{Dataset Collection and Era Filtering}
+ 
+The dataset is sourced from the Formula 1 World Championship dataset on Kaggle, which includes race results, qualifying times, driver metadata, constructor metadata, and circuit information dating back to 1950. We restrict our analysis to 2014--2024 (the hybrid-turbo era) for two reasons. First, the 2014 regulation change introduced a fundamentally different power unit architecture, making pre-2014 constructor strength non-transferable. Second, limiting to a single regulatory era ensures that the features we engineer, particularly constructor and driver rolling statistics that reflect comparable competitive conditions. After filtering, the dataset contains 228 races and 4,626 driver-race entries, with a podium rate of 14.8\% (approximately 3 podiums per race across $\sim$20 drivers).
+ 
+\subsection{Feature Engineering}
+ 
+All features are constructed using only information available before a race starts to ensure no data leakage. Rolling statistics use a \texttt{shift(1)} expanding window so that the current race is never included in its own feature calculation. The six features used are:
+ 
+\begin{itemize}
+    \item \textbf{Grid position:} The driver's starting position on the grid. Pit lane starts (recorded as 0) are replaced with 20 to reflect a back-of-grid disadvantage.
+    \item \textbf{Qualifying position:} The driver's classification position from the qualifying session. Missing values are filled with grid position as a fallback.
+    \item \textbf{Driver season podium rate:} The fraction of races in the current season (prior to this round) in which the driver finished on the podium.
+    \item \textbf{Constructor season podium rate:} The fraction of race entries in the current season (prior to this round) in which the constructor's car finished on the podium.
+    \item \textbf{Driver season average grid:} The driver's mean starting grid position across all prior races in the current season.
+    \item \textbf{Teammate podium rate differential:} The driver's season podium rate minus their teammate's season podium rate, capturing relative within-team performance.
+\end{itemize}
+ 
+For the first race of each season, where no prior data exists, rolling statistics are initialized to the season mean to avoid propagating null values into the model.
+ 
+\subsection{Label}
+ 
+The binary label is derived from \texttt{positionOrder}: a value of 1 indicates a podium finish (positions 1--3), and 0 indicates a non-podium finish. We use \texttt{positionOrder} rather than \texttt{position} because \texttt{position} is null for drivers who retire from the race (DNF), while \texttt{positionOrder} always contains a value.
+ 
+\subsection{Class Imbalance}
+ 
+Since only 14.8\% of entries are podium finishes, a naive model could achieve $\sim$85\% accuracy by predicting ``no podium'' for every entry. To address this, all models use \texttt{class\_weight=`balanced'}, which adjusts class weights inversely proportional to their frequency.
+ 
+\subsection{Train / Validation / Test Split}
+ 
+To avoid data leakage from future races into the training set, we use a temporal split rather than random shuffling:
+ 
+\begin{itemize}
+    \item \textbf{Train:} 2014--2021 (3,267 examples)
+    \item \textbf{Validation:} 2022 (440 examples)
+    \item \textbf{Test:} 2023--2024 (919 examples)
+\end{itemize}
+ 
+A random split would allow the model to train on, for example, 2023 race data while being tested on 2022 race data — inflating performance metrics without reflecting real predictive ability.
+ 
+\subsection{Models}
+ 
+All models are implemented as \texttt{sklearn} pipelines combining a \texttt{StandardScaler} with the classifier. Scaling is essential for Logistic Regression and SVM, which are sensitive to feature magnitude.
+ 
+\begin{itemize}
+    \item \textbf{Logistic Regression (L2):} Linear baseline classifier with L2 regularization. Provides interpretable coefficients indicating feature importance.
+    \item \textbf{Logistic Regression (L1):} Variant with L1 regularization, which drives some coefficients to zero, enabling implicit feature selection.
+    \item \textbf{SVM Linear:} Support vector machine with a linear kernel. Finds the maximum-margin hyperplane separating podium from non-podium entries.
+    \item \textbf{SVM RBF:} Support vector machine with a radial basis function kernel, capable of modeling nonlinear decision boundaries.
+    \item \textbf{Decision Tree:} Nonlinear, interpretable model. Maximum depth is capped at 5 and minimum samples per leaf at 20 to reduce overfitting.
+\end{itemize}
+ 
+\subsection{Evaluation Metrics}
+ 
+Given the class imbalance, accuracy alone is insufficient. We report five metrics:
+ 
+\begin{itemize}
+    \item \textbf{Accuracy:} Fraction of all predictions that are correct.
+    \item \textbf{Precision:} Of all entries predicted as podium, the fraction that actually finished on the podium.
+    \item \textbf{Recall:} Of all actual podium finishes, the fraction the model correctly identified.
+    \item \textbf{F1 Score:} Harmonic mean of precision and recall.
+    \item \textbf{ROC-AUC:} Area under the receiver operating characteristic curve, measuring the model's ability to rank podium finishers above non-podium finishers regardless of threshold.
+\end{itemize}
 
-If you are using existing methods on a \textbf{new dataset}. You
-can talk about ``dataset collection'', ``data pre-processing'',
-``Feature selection'', ``Choices of hyper-parameter'',
-``Evaluation metrics'', etc.
+\section{Preliminary Results}
 
-If you propose some \textbf{new methods}. You can talk about
-``Drawbacks of existing methods'', ``Your proposed methods'',
-``Your models based on your methods'', etc.
+We evaluated all five models on the 2022 validation set and the 2023--2024 test set. Results are reported in Tables \ref{tab:val} and \ref{tab:test}.
+ 
+\begin{table}[h]
+\centering
+\caption{Validation Set Results (2022 Season)}
+\label{tab:val}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{ROC-AUC} \\
+\midrule
+Logistic Regression (L2) & 0.8705 & 0.5391 & 0.9394 & 0.6851 & 0.9444 \\
+Logistic Regression (L1) & 0.8705 & 0.5391 & 0.9394 & 0.6851 & 0.9441 \\
+\textbf{SVM Linear}       & \textbf{0.8773} & \textbf{0.5508} & \textbf{0.9848} & \textbf{0.7065} & \textbf{0.9461} \\
+SVM RBF                  & 0.8591 & 0.5161 & 0.9697 & 0.6737 & 0.9383 \\
+Decision Tree            & 0.8432 & 0.4885 & 0.9697 & 0.6497 & 0.9282 \\
+\bottomrule
+\end{tabular}
+\end{table}
+ 
+\begin{table}[h]
+\centering
+\caption{Test Set Results (2023--2024 Seasons)}
+\label{tab:test}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{ROC-AUC} \\
+\midrule
+Logistic Regression (L2) & 0.8368 & 0.4769 & 0.8986 & 0.6231 & 0.9285 \\
+Logistic Regression (L1) & 0.8368 & 0.4769 & 0.8986 & 0.6231 & 0.9285 \\
+\textbf{SVM Linear}       & 0.8303 & 0.4669 & 0.9203 & 0.6195 & \textbf{0.9299} \\
+SVM RBF                  & 0.8281 & 0.4640 & 0.9348 & 0.6202 & 0.9118 \\
+Decision Tree            & 0.8150 & 0.4429 & 0.8986 & 0.5933 & 0.9055 \\
+\bottomrule
+\end{tabular}
+\end{table}
+ 
+SVM Linear achieves the best overall performance on both sets, leading in F1 (0.707) and ROC-AUC (0.946) on validation. All models exhibit high recall (0.93--0.98), meaning they successfully identify nearly every real podium finish. Precision is lower across all models ($\sim$0.47--0.55), reflecting the difficulty introduced by the 14.8\% class imbalance, only 3 of approximately 20 drivers podium per race.
+ 
+The small but consistent performance drop from validation to test (e.g., SVM Linear ROC-AUC: 0.946 $\rightarrow$ 0.930) is expected and reflects the growing dominance of \textbf{Max Verstappen and Red Bull Racing} in 2023--2024, which represents a slight distribution shift from the training period.
+ 
+Feature importance analysis from the Decision Tree and Logistic Regression (L2) models indicates that qualifying position and grid position are the strongest predictors of podium probability, consistent with our expectations. Constructor season podium rate also carries significant weight, supporting the hypothesis that constructor dominance is a key driver of race outcomes. The teammate podium rate differential was identified as the least important feature by both models.
+ 
+A feature correlation heatmap (Figure \ref{fig:heatmap}) computed on the training set confirms that grid position and qualifying position are highly correlated with each other (as expected) and moderately correlated with the podium label. Driver and constructor season podium rates show moderate positive correlation with the label, while the teammate differential shows the weakest correlation.
+ 
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.65\textwidth]{feature_correlation_heatmap.png}
+\caption{Feature correlation heatmap computed on the training set (2014--2021).}
+\label{fig:heatmap}
+\end{figure}
 
-These are possible subsections in this part. You don't need to
-include all of them. I want to see the contents that you spend
-time on and have some insights.
-
-This part is one of the most important sections. The length of this
-section should be about 1.5 pages.
-
-\section{Preliminary Results(Done/Look over)}
-
-To help show what we are wanting to do with this project, we started off by predicting a race that had already happened to see what the results would be. We feed the model features that we already know ahead of time, grid position, qualifying result and how the driver and constructor have been performing that season. The race we decided to use was 2022 Bahrain GP where Leclerc won. The model used the following data and predicted him to win, which he did. 
-
-We used our six models stated in the introduction to run tests on two Sets, Validation(2022) and Test(2023-2024). With these sets we found the accuracy, precision, recall, F1 and ROC-AUC of each model. With our Validation set SVM linear had the highest percentage in each of the 5 categories tested, while Decision tree being the worst in about every category. With the Test set SVM linear had the highest ROC-AUC while other models had the highest percentages else where. With these high percentages this means that the models can catch almost every podium finish accurately. 
-
-In one of our other tests we took two models, Decision Tree and Logistic Regression(L2) -|Coefficients|, and tested what is the importance of each feature. Decision Tree said the that qualifying postion as the most importance as an 80 percent importance value, with teammate podium rate difference being the least important. L2 stated that the grid was the most important, and matching the Decision tree in having the same feature with the least importance. Although these models had different importance values across features, they each had the same top three and bottom three just in different order.
-
-In another test we made a heatmap on how the features correlate with one another. This map will help us determine the most important features. These would be grid position, qualifying position and, driver/constructor podium rates. It also helps to take into account what features can be avoided and are redundant, for example teammate podium rate diff.
 
 
+\section{Future plan}
 
-\section{Future plan(Done/Look Over)}
+A key next step is to evolve this project from a solid classification model into a richer and more realistic race-prediction system. While the current model performs well using only pre-race features, future efforts should focus on enhancing generalization and practical utility.
+ 
+One direction is implementing season-by-season cross-validation to ensure reliability across different regulatory periods. Expanding the feature set to include circuit type (street circuit vs. permanent track), recent race form, and reliability indicators would provide a more comprehensive representation of race conditions.
+ 
+Since the model currently prioritizes high recall at the expense of precision, refining probability thresholds or adopting a ranking-based approach, ordering drivers by podium likelihood which would make predictions more actionable. Incorporating ensemble methods such as Random Forest or XGBoost could further improve performance. Finally, hyperparameter tuning via grid search on regularization strength (C), kernel parameters, and tree depth is planned for the final report.
 
-A key next step for this project is to evolve it from a solid classification model into a more rich and realistic race-prediction system. While the current model performs well using only pre-race features, future efforts should focus on enhancing generalization and practical utility. One way to achieve this is by implementing season-by-season validation to ensure the model remains reliable across different years, particularly given the frequent shifts in team performance in Formula 1. 
+\section{References}
 
-Expanding the feature set to include recent race form, circuit-specific performance, and reliability indicators would provide a more comprehensive representation of race conditions. Additionally, since the model currently prioritizes high recall at the expense of precision, refining probability thresholds or adopting a ranking-based approach—where drivers are ordered by the likelihood of achieving a podium finish—would make the predictions more meaningful.
+\begin{enumerate}
+    \item Staub, S. (2022). \textit{Formula One Race Prediction Model}. The George Washington University. \url{https://datasci.columbian.gwu.edu/sites/g/files/zaxdzs4746/files/2023-02/f1-final-presentation.pdf}
+    \item Vopani. (2020). \textit{Formula 1 World Championship (1950--2020)}. Kaggle. \url{https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020}
+    \item Ganjoo, et al. (2025). \textit{Predicting Formula 1 Race Outcomes Using Machine Learning}. CS231N Final Report, Stanford University. \url{https://cs231n.stanford.edu/2025/papers/text_file_840588515-CS231N_FinalReport.pdf}
+\end{enumerate}
 
-Incorporating advanced models, such as ensemble methods like Random Forests or XGBoost, could further enhance performance. Finally, presenting the predictions in a more user-friendly format, such as a dashboard or race preview tool, would increase the project’s impact and make it more appealing as both a technical and applied machine learning solution.
-
-\section{References (To Do)}
-
-https://datasci.columbian.gwu.edu/sites/g/files/zaxdzs4746/files/2023-02/f1-final-presentation.pdf
-
-https://www.kaggle.com/datasets/rohanrao/formula-1-world-championship-1950-2020
+\section*{Acknowledgments}
+The authors used Claude as an AI assistant during the development 
+of this project, including debugging and report editing.
 
 \end{document}
