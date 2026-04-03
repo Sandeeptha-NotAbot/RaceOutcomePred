@@ -8,17 +8,18 @@ Expected files in DATA_RAW_DIR:
     races.csv, results.csv, drivers.csv,
     constructors.csv, qualifying.csv, circuits.csv
 """
+__author__ = "Sandeeptha Madan, Evan Sivets"
 
 import os
 import pandas as pd
 
-# ── Config ────────────────────────────────────────────────────────────────────
+#  Config 
 DATA_RAW_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "raw")
 ERA_START    = 2014   # first year of the hybrid-turbo era
 ERA_END      = 2024   # last complete season before 2026 reg changes
 
 
-# ── Loaders ───────────────────────────────────────────────────────────────────
+#  Loaders 
 
 def _path(filename: str) -> str:
     return os.path.join(DATA_RAW_DIR, filename)
@@ -49,7 +50,7 @@ def load_raw() -> dict[str, pd.DataFrame]:
     return dfs
 
 
-# ── Filtering ─────────────────────────────────────────────────────────────────
+#  Filtering 
 
 def filter_era(races: pd.DataFrame) -> pd.DataFrame:
     """Keep only races within the hybrid-turbo era (ERA_START – ERA_END)."""
@@ -61,7 +62,7 @@ def filter_era(races: pd.DataFrame) -> pd.DataFrame:
     return filtered
 
 
-# ── Merging ───────────────────────────────────────────────────────────────────
+#  Merging 
 
 def build_dataset(dfs: dict[str, pd.DataFrame]) -> pd.DataFrame:
     """
@@ -81,46 +82,46 @@ def build_dataset(dfs: dict[str, pd.DataFrame]) -> pd.DataFrame:
     qualifying   = dfs["qualifying"]
     circuits     = dfs["circuits"]
 
-    # ── 1. Keep only results for era races ────────────────────────────────────
+    #  1. Keep only results for era races 
     era_race_ids = set(races["raceId"])
     results = results[results["raceId"].isin(era_race_ids)].copy()
 
-    # ── 2. Numeric coercions ──────────────────────────────────────────────────
+    #  2. Numeric coercions 
     results["grid"]          = pd.to_numeric(results["grid"],          errors="coerce")
     results["positionOrder"] = pd.to_numeric(results["positionOrder"], errors="coerce")
     results["position"]      = pd.to_numeric(results["position"],      errors="coerce")
 
-    # ── 3. Build label: podium = finished P1, P2, or P3 ──────────────────────
+    #  3. Build label: podium = finished P1, P2, or P3 
     results["podium"] = (results["positionOrder"].between(1, 3)).astype(int)
 
-    # ── 4. Merge races (year, round, circuitId) ───────────────────────────────
+    #  4. Merge races (year, round, circuitId) 
     race_cols = ["raceId", "year", "round", "circuitId", "name"]
     df = results.merge(races[race_cols].rename(columns={"name": "race_name"}),
                        on="raceId", how="left")
 
-    # ── 5. Merge circuits ─────────────────────────────────────────────────────
+    #  5. Merge circuits 
     circuit_cols = ["circuitId", "name", "country"]
     df = df.merge(circuits[circuit_cols].rename(columns={"name": "circuit_name"}),
                   on="circuitId", how="left")
 
-    # ── 6. Merge drivers ──────────────────────────────────────────────────────
+    #  6. Merge drivers 
     drivers["driver_name"] = drivers["forename"] + " " + drivers["surname"]
     driver_cols = ["driverId", "driver_name", "nationality"]
     df = df.merge(drivers[driver_cols].rename(columns={"nationality": "driver_nationality"}),
                   on="driverId", how="left")
 
-    # ── 7. Merge constructors ─────────────────────────────────────────────────
+    #  7. Merge constructors 
     constructor_cols = ["constructorId", "name"]
     df = df.merge(constructors[constructor_cols].rename(columns={"name": "constructor_name"}),
                   on="constructorId", how="left")
 
-    # ── 8. Merge qualifying (best lap time per driver per race) ───────────────
+    #  8. Merge qualifying (best lap time per driver per race) 
     qual_cols = ["raceId", "driverId", "position", "q1", "q2", "q3"]
     qualifying_era = qualifying[qualifying["raceId"].isin(era_race_ids)][qual_cols].copy()
     qualifying_era = qualifying_era.rename(columns={"position": "quali_position"})
     df = df.merge(qualifying_era, on=["raceId", "driverId"], how="left")
 
-    # ── 9. Select & reorder final columns ─────────────────────────────────────
+    #  9. Select & reorder final columns 
     final_cols = [
         "raceId", "year", "round", "circuitId", "circuit_name", "country",
         "driverId", "driver_name", "driver_nationality",
@@ -137,7 +138,7 @@ def build_dataset(dfs: dict[str, pd.DataFrame]) -> pd.DataFrame:
     return df
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────
+#  Main 
 
 def load_dataset() -> pd.DataFrame:
     """

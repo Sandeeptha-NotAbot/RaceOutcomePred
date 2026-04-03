@@ -13,15 +13,16 @@ Features engineered:
     - teammate_podium_rate_diff   : driver's podium rate minus their teammate's (same team, same season)
 
 Label:
-    - podium (1 = P1–P3, 0 = otherwise)
+    - podium (1 = P1-P3, 0 = otherwise)
 """
+__author__ = "Sandeeptha Madan, Evan Sivets"
 
 import pandas as pd
 import numpy as np
 from src.data_loader import load_dataset
 
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
+#  Helpers 
 
 def _expanding_season_stat(df: pd.DataFrame,
                            group_cols: list[str],
@@ -56,7 +57,7 @@ def _expanding_season_stat(df: pd.DataFrame,
     return df
 
 
-# ── Feature engineering ───────────────────────────────────────────────────────
+#  Feature engineering 
 
 def add_driver_season_podium_rate(df: pd.DataFrame) -> pd.DataFrame:
     """Fraction of races THIS season (before this round) where driver finished podium."""
@@ -104,7 +105,7 @@ def add_teammate_podium_rate_diff(df: pd.DataFrame) -> pd.DataFrame:
         raise ValueError("Run add_driver_season_podium_rate() before add_teammate_podium_rate_diff().")
 
     # One row per (race, constructor) with mean podium rate of *other* drivers
-    # at the same constructor — i.e. the teammate(s)
+    # at the same constructor
     teammate_mean = (
         df.groupby(["raceId", "constructorId", "driverId"])["driver_season_podium_rate"]
         .first()
@@ -134,7 +135,7 @@ def add_teammate_podium_rate_diff(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-# ── Quali position fill ───────────────────────────────────────────────────────
+#  Quali position fill 
 
 def clean_grid_and_quali(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -148,7 +149,7 @@ def clean_grid_and_quali(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-# ── Pipeline ──────────────────────────────────────────────────────────────────
+#  Pipeline 
 
 FEATURE_COLS = [
     "grid",
@@ -195,7 +196,7 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-# ── Train / val / test split ──────────────────────────────────────────────────
+# Train / val / test split 
 
 def split_by_season(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
@@ -222,7 +223,7 @@ def get_Xy(split_df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
     return split_df[FEATURE_COLS], split_df[LABEL_COL]
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────
+# Main 
 
 if __name__ == "__main__":
     raw_df      = load_dataset()

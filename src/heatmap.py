@@ -6,6 +6,7 @@ Generates a feature correlation heatmap and saves it to results/.
 Usage:
     python -m src.heatmap
 """
+__author__ = "Sandeeptha Madan, Evan Sivets"
 
 import os
 import matplotlib

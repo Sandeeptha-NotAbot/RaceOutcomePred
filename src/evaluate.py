@@ -11,6 +11,7 @@ validation and test sets, producing:
 Usage:
     python src/evaluate.py
 """
+__author__ = "Sandeeptha Madan, Evan Sivets"
 
 import os
 import json
@@ -18,7 +19,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.use("Agg")   # non-interactive backend, safe for scripts
+matplotlib.use("Agg")  
 
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score,
@@ -29,11 +30,11 @@ from src.data_loader import load_dataset
 from src.features import build_features, split_by_season, get_Xy, FEATURE_COLS
 from src.train import load_models
 
-# ── Config ────────────────────────────────────────────────────────────────────
+# Config 
 RESULTS_DIR = os.path.join(os.path.dirname(__file__), "..", "results")
 
 
-# ── Metrics ───────────────────────────────────────────────────────────────────
+# Metrics 
 
 def compute_metrics(model, X: pd.DataFrame, y: pd.Series) -> dict:
     """Return a dict of evaluation metrics for one model on one split."""
@@ -67,7 +68,7 @@ def evaluate_all(models: dict,
     return pd.DataFrame(rows)
 
 
-# ── Confusion matrices ────────────────────────────────────────────────────────
+#  Confusion matrices 
 
 def plot_confusion_matrices(models: dict,
                             X_test: pd.DataFrame,
@@ -91,7 +92,7 @@ def plot_confusion_matrices(models: dict,
         print(f"  Saved confusion matrix → {path}")
 
 
-# ── Feature importance ────────────────────────────────────────────────────────
+#  Feature importance 
 
 def plot_feature_importance(models: dict) -> None:
     """
@@ -142,7 +143,7 @@ def _save_importance_plot(importances: np.ndarray,
     print(f"  Saved feature importance → {path}")
 
 
-# ── Summary table ─────────────────────────────────────────────────────────────
+#  Summary table 
 
 def print_and_save_metrics(df: pd.DataFrame) -> None:
     """Pretty-print the metrics table and save it as CSV and JSON."""
@@ -171,7 +172,7 @@ def print_and_save_metrics(df: pd.DataFrame) -> None:
     print(f"  Saved metrics JSON  → {json_path}")
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────
+#  Main 
 
 if __name__ == "__main__":
     # Load data

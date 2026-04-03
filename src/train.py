@@ -12,6 +12,7 @@ Models:
 Usage:
     python src/train.py
 """
+__author__ = "Sandeeptha Madan, Evan Sivets"
 
 import os
 import pickle
@@ -26,12 +27,12 @@ from sklearn.pipeline import Pipeline
 from src.data_loader import load_dataset
 from src.features import build_features, split_by_season, get_Xy
 
-# ── Config ────────────────────────────────────────────────────────────────────
+# Config 
 MODELS_DIR = os.path.join(os.path.dirname(__file__), "..", "models")
 RANDOM_SEED = 42
 
 
-# ── Model definitions ─────────────────────────────────────────────────────────
+# Model definitions 
 
 def get_models() -> dict[str, Pipeline]:
     """
@@ -43,7 +44,7 @@ def get_models() -> dict[str, Pipeline]:
     but included in a pipeline for consistency.
     """
     models = {
-        # Logistic Regression — L2 regularization (default, good baseline)
+        # Logistic Regression — L2 regularization 
         "logreg_l2": Pipeline([
             ("scaler", StandardScaler()),
             ("clf", LogisticRegression(
@@ -55,7 +56,7 @@ def get_models() -> dict[str, Pipeline]:
             )),
         ]),
 
-        # Logistic Regression — L1 regularization (sparse, feature selection)
+        # Logistic Regression — L1 regularization 
         "logreg_l1": Pipeline([
             ("scaler", StandardScaler()),
             ("clf", LogisticRegression(
@@ -74,7 +75,7 @@ def get_models() -> dict[str, Pipeline]:
             ("clf", SVC(
                 kernel="linear",
                 C=1.0,
-                probability=True,          # needed for predict_proba in evaluate.py
+                probability=True,          
                 random_state=RANDOM_SEED,
                 class_weight="balanced",
             )),
@@ -107,7 +108,7 @@ def get_models() -> dict[str, Pipeline]:
     return models
 
 
-# ── Training ──────────────────────────────────────────────────────────────────
+# Training 
 
 def train_all(X_train: pd.DataFrame,
               y_train: pd.Series) -> dict[str, Pipeline]:
@@ -126,7 +127,7 @@ def train_all(X_train: pd.DataFrame,
     return fitted
 
 
-# ── Saving / loading ──────────────────────────────────────────────────────────
+# Saving / loading 
 
 def save_models(fitted: dict[str, Pipeline]) -> None:
     """Pickle each fitted pipeline to models/<name>.pkl"""
@@ -151,7 +152,7 @@ def load_models() -> dict[str, Pipeline]:
     return fitted
 
 
-# ── Quick val check ───────────────────────────────────────────────────────────
+# Quick val check 
 
 def quick_val_accuracy(fitted: dict[str, Pipeline],
                        X_val: pd.DataFrame,
@@ -165,7 +166,7 @@ def quick_val_accuracy(fitted: dict[str, Pipeline],
     print("\nRun evaluate.py for full metrics (precision, recall, F1, ROC-AUC).")
 
 
-# ── Main ──────────────────────────────────────────────────────────────────────
+# Main 
 
 if __name__ == "__main__":
     # Load and prepare data
