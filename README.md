@@ -1,10 +1,10 @@
 # 🏎️ RaceOutcomePred
 
-> **Can we predict who stands on the podium before the race even starts?**
+> **Can we predict who stands on the podium?**
 
 ![F1 Car](https://media.tenor.com/HAQL59Z7D_wAAAAi/formula-racing.gif)
  
-Machine learning models that predict Formula 1 podium finishes (P1–P3) using only pre-race data — no live telemetry, no lap times, no cheating.
+Machine learning models that predict Formula 1 podium finishes (P1–P3) using only pre-race data
  
 ![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-1.8-orange?logo=scikit-learn&logoColor=white)
