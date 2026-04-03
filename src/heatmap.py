@@ -53,7 +53,8 @@ if __name__ == "__main__":
         ax=ax,
         cbar_kws={"shrink": 0.8},
     )
-    ax.set_title("Feature Correlation Heatmap (Training Set, 2014–2021)", fontsize=13)
+    ax.set_xlabel("Features", fontsize=11)
+    ax.set_ylabel("Features", fontsize=11)
     plt.tight_layout()
 
     os.makedirs(RESULTS_DIR, exist_ok=True)
