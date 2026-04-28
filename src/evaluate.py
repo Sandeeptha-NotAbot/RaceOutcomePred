@@ -122,6 +122,16 @@ def plot_feature_importance(models: dict) -> None:
             title="Logistic Regression (L2) — |Coefficients|",
             filename="importance_logreg_l2.png",
         )
+    
+    # Random Forest
+    if "random_forest" in models:
+        clf = models["random_forest"].named_steps["clf"]
+        importances = clf.feature_importances_
+        _save_importance_plot(
+            importances, feature_names,
+            title="Random Forest — Feature Importances (mean over 100 trees)",
+            filename="importance_random_forest.png",
+        )
 
 
 def _save_importance_plot(importances: np.ndarray,

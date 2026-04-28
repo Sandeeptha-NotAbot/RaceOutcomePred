@@ -8,6 +8,7 @@ Models:
     1. Logistic Regression  (baseline, L1 + L2 comparison)
     2. Support Vector Machine (linear + RBF kernel comparison)
     3. Decision Tree         (nonlinear, interpretable)
+    4. Random Forest
 
 Usage:
     python src/train.py
@@ -23,6 +24,7 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
+from sklearn.ensemble import RandomForestClassifier
 
 from src.data_loader import load_dataset
 from src.features import build_features, split_by_season, get_Xy
@@ -102,6 +104,19 @@ def get_models() -> dict[str, Pipeline]:
                 min_samples_leaf=20,
                 class_weight="balanced",
                 random_state=RANDOM_SEED,
+            )),
+        ]),
+
+        #Random Forest
+        "random_forest": Pipeline([
+            ("scaler", StandardScaler()),
+            ("clf", RandomForestClassifier(
+                n_estimators=100,
+                max_depth=10,
+                min_samples_leaf=10,
+                class_weight="balanced",
+                random_state=RANDOM_SEED,
+                n_jobs=-1,           
             )),
         ]),
     }
