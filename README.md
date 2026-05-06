@@ -1,6 +1,6 @@
-# 🏎️ RaceOutcomePred
+# 🏎️ F1 Race Outcome Prediction
 
-> **Can we predict who stands on the podium?**
+> **Can we predict who stands on the podium? COMS 474 Final Project**
 
 ![F1 Car](https://media.tenor.com/HAQL59Z7D_wAAAAi/formula-racing.gif)
  
