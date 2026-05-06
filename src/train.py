@@ -25,6 +25,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
 
 from src.data_loader import load_dataset
 from src.features import build_features, split_by_season, get_Xy
@@ -141,6 +142,64 @@ def train_all(X_train: pd.DataFrame,
 
     return fitted
 
+def tune_models(X_train: pd.DataFrame,
+                y_train: pd.Series) -> dict[str, Pipeline]:
+    """
+    Run GridSearchCV to find best hyperparameters for each model.
+    Uses 5-fold cross-validation on the training set.
+    Returns fitted best estimators as a dict of pipelines.
+    """
+    param_grids = {
+        "logreg_l2": {
+            "clf__C": [0.01, 0.1, 1.0, 10.0],
+        },
+        "logreg_l1": {
+            "clf__C": [0.01, 0.1, 1.0, 10.0],
+        },
+        "svm_linear": {
+            "clf__C": [0.01, 0.1, 1.0, 10.0],
+        },
+        "svm_rbf": {
+            "clf__C": [0.1, 1.0, 10.0],
+            "clf__gamma": ["scale", "auto"],
+        },
+        "decision_tree": {
+            "clf__max_depth": [3, 5, 7, 10],
+            "clf__min_samples_leaf": [10, 20, 30],
+        },
+        "random_forest": {
+            "clf__n_estimators": [50, 100, 200],
+            "clf__max_depth": [5, 10, None],
+            "clf__min_samples_leaf": [5, 10, 20],
+        },
+    }
+
+    base_models  = get_models()
+    tuned = {}
+
+    print("\nTuning hyperparameters (this may take a few minutes)...")
+    print("-" * 40)
+    for name, pipeline in base_models.items():
+        grid = param_grids.get(name, {})
+        if not grid:
+            tuned[name] = pipeline.fit(X_train, y_train)
+            continue
+
+        gs = GridSearchCV(
+            pipeline,
+            grid,
+            cv=5,
+            scoring="roc_auc",
+            n_jobs=-1,
+            verbose=0,
+        )
+        print(f"  Tuning {name}...", end=" ", flush=True)
+        gs.fit(X_train, y_train)
+        tuned[name] = gs.best_estimator_
+        print(f"done  best params: {gs.best_params_}")
+
+    return tuned
+
 
 # Saving / loading 
 
@@ -197,7 +256,7 @@ if __name__ == "__main__":
     print(f"  Features: {list(X_train.columns)}")
 
     # Train
-    fitted = train_all(X_train, y_train)
+    fitted = tune_models(X_train, y_train)
 
     # Save
     print("\nSaving models...")

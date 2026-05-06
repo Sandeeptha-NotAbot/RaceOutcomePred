@@ -20,6 +20,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use("Agg")  
+from sklearn.metrics import RocCurveDisplay, roc_curve, auc
 
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score,
@@ -133,6 +134,32 @@ def plot_feature_importance(models: dict) -> None:
             filename="importance_random_forest.png",
         )
 
+def plot_roc_curves(models: dict,
+                    X_test: pd.DataFrame,
+                    y_test: pd.Series) -> None:
+    """Plot ROC curves for all models on one chart and save to results/."""
+    os.makedirs(RESULTS_DIR, exist_ok=True)
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    for name, model in sorted(models.items()):
+        y_prob = model.predict_proba(X_test)[:, 1]
+        fpr, tpr, _ = roc_curve(y_test, y_prob)
+        roc_auc = auc(fpr, tpr)
+        ax.plot(fpr, tpr, label=f"{name}  (AUC = {roc_auc:.3f})")
+
+    ax.plot([0, 1], [0, 1], "k--", label="Random baseline")
+    ax.set_xlabel("False Positive Rate")
+    ax.set_ylabel("True Positive Rate")
+    ax.set_title("ROC Curves — All Models (Test Set 2023–2024)")
+    ax.legend(loc="lower right", fontsize=9)
+    plt.tight_layout()
+
+    path = os.path.join(RESULTS_DIR, "roc_curves.png")
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+    print(f"  Saved ROC curves → {path}")
+
 
 def _save_importance_plot(importances: np.ndarray,
                           feature_names: list[str],
@@ -205,5 +232,6 @@ if __name__ == "__main__":
     print("\nGenerating plots...")
     plot_confusion_matrices(models, X_test, y_test)
     plot_feature_importance(models)
+    plot_roc_curves(models, X_test, y_test)
 
     print("\nDone. All outputs saved to results/")
