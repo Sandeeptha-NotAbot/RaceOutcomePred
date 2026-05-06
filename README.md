@@ -68,6 +68,7 @@ Before a race starts, we feed the model features we know *ahead of time* — gri
 | SVM Linear | Linear | Maximum margin classifier |
 | SVM RBF | Nonlinear | Captures complex decision boundaries |
 | Decision Tree | Nonlinear | Interpretable structure |
+| Random Forest | Nonlinear | Ensemble of decision trees |
  
 ---
  
@@ -77,21 +78,23 @@ Before a race starts, we feed the model features we know *ahead of time* — gri
  
 | Model | Accuracy | Precision | Recall | F1 | ROC-AUC |
 |---|---|---|---|---|---|
-| Logistic Regression L2 | 0.8705 | 0.5391 | 0.9394 | 0.6851 | 0.9444 |
-| Logistic Regression L1 | 0.8705 | 0.5391 | 0.9394 | 0.6851 | 0.9441 |
-| **SVM Linear** | **0.8773** | **0.5508** | **0.9848** | **0.7065** | **0.9461** |
-| SVM RBF | 0.8591 | 0.5161 | 0.9697 | 0.6737 | 0.9383 |
-| Decision Tree | 0.8432 | 0.4885 | 0.9697 | 0.6497 | 0.9282 |
+| Logistic Regression L2 | 0.8682 | 0.5345 | 0.9394 | 0.6813 | 0.9445 |
+| Logistic Regression L1 | 0.8682 | 0.5345 | 0.9394 | 0.6813 | 0.9443 |
+| **SVM Linear** | **0.8705** | 0.5385 | 0.9545 | **0.6885** | **0.9459** |
+| SVM RBF | 0.8545 | 0.5078 | **0.9848** | 0.6701 | 0.9382 |
+| Decision Tree | 0.8432 | 0.4885 | 0.9697 | 0.6497 | 0.9358 |
+| Random Forest | 0.8636 | 0.5254 | 0.9394 | 0.6739 | 0.9440 |
  
 **Test Set (2023–2024 seasons)**
  
 | Model | Accuracy | Precision | Recall | F1 | ROC-AUC |
 |---|---|---|---|---|---|
-| Logistic Regression L2 | 0.8368 | 0.4769 | 0.8986 | 0.6231 | 0.9285 |
-| Logistic Regression L1 | 0.8368 | 0.4769 | 0.8986 | 0.6231 | 0.9285 |
-| **SVM Linear** | 0.8303 | 0.4669 | 0.9203 | 0.6195 | **0.9299** |
-| SVM RBF | 0.8281 | 0.4640 | 0.9348 | 0.6202 | 0.9118 |
-| Decision Tree | 0.8150 | 0.4429 | 0.8986 | 0.5933 | 0.9055 |
+| Logistic Regression L2 | 0.8390 | 0.4808 | 0.9058 | 0.6281 | 0.9286 |
+| Logistic Regression L1 | 0.8357 | 0.4753 | 0.9058 | 0.6234 | 0.9286 |
+| **SVM Linear** | 0.8335 | 0.4717 | 0.9058 | 0.6203 | **0.9295** |
+| SVM RBF | 0.8107 | 0.4396 | **0.9493** | 0.6009 | 0.9139 |
+| Decision Tree | 0.8052 | 0.4305 | 0.9203 | 0.5866 | 0.9206 |
+| **Random Forest** | **0.8498** | **0.5000** | 0.8623 | **0.6330** | 0.9283 |
  
 > High recall (~0.93–0.98) means the models catch almost every real podium. Lower precision reflects the inherent difficulty of the class imbalance — only 3 of ~20 drivers podium per race.
 
@@ -101,6 +104,10 @@ Before a race starts, we feed the model features we know *ahead of time* — gri
 ### Feature Importance
 ![Decision Tree Importance](results/importance_decision_tree.png)
 ![Logistic Regression Importance](results/importance_logreg_l2.png)
+![Random Forest Importance](results/importance_random_forest.png)
+
+### ROC Curves
+![ROC Curves](results/roc_curves.png)
  
 ---
 
